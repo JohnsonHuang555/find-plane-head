@@ -1,5 +1,14 @@
+'use client';
+
+import { Client } from 'boardgame.io/react';
 import PapayaButton from '@/components/papaya/PapayaButton';
 import GameBoard from './(components)/GameBoard';
+import { FindPlaneHead } from '../../games/FindPlaneHead';
+
+const FindPlaneHeadClient = Client({
+  game: FindPlaneHead,
+  // board: TicTacToeBoard,
+});
 
 export default function SinglePlay() {
   return (
@@ -14,6 +23,7 @@ export default function SinglePlay() {
       >
         完成
       </PapayaButton>
+      <FindPlaneHeadClient />
     </div>
   );
 }

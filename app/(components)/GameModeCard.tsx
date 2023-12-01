@@ -14,6 +14,14 @@ const GameModeCard = ({ title, path, modalContent }: GameModeCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {
+    if (path === '#') {
+      Modal.info({
+        title,
+        content: 'Coming soon',
+        centered: true,
+      });
+      return;
+    }
     Modal.confirm({
       title,
       content: modalContent,
