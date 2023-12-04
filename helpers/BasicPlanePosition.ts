@@ -1,4 +1,4 @@
-import { PlaneMap } from '@/games/FindPlaneHead';
+import { Plane, PlaneMap } from '@/games/FindPlaneHead';
 
 export const basicPlanePosition: PlaneMap = {
   A: [
@@ -39,4 +39,20 @@ export const basicPlanePosition: PlaneMap = {
     { x: 2, y: 9, isHead: false },
     { x: 3, y: 9, isHead: false },
   ],
+};
+
+export const generatePlaneA = (headX: number, headY: number): Plane[] => {
+  return [
+    { x: headX, y: headY, isHead: true },
+    { x: headX - 2, y: headY + 1, isHead: false },
+    { x: headX - 1, y: headY + 1, isHead: false },
+    { x: headX, y: headY + 1, isHead: false },
+    { x: headX + 1, y: headY + 1, isHead: false },
+    { x: headX + 2, y: headY + 1, isHead: false },
+    { x: headX, y: headY + 2, isHead: false },
+    { x: headX, y: headY + 3, isHead: false },
+    { x: headX - 1, y: headY + 4, isHead: false },
+    { x: headX, y: headY + 4, isHead: false },
+    { x: headX + 1, y: headY + 4, isHead: false },
+  ];
 };

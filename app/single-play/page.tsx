@@ -9,18 +9,12 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   moves,
   ctx,
 }) => {
-  const handleCellClick = (x: number, y: number) => {};
   const handleDeployPlane = () => {};
 
   return (
     <div className="flex flex-col justify-center items-center">
       {ctx.phase === 'deployment' && (
-        <DeploymentPhase
-          playerAPlanes={G.playerAPlanes}
-          playerBPlanes={G.playerBPlanes}
-          onCellClick={handleCellClick}
-          onDeployPlane={handleDeployPlane}
-        />
+        <DeploymentPhase onDeployPlane={handleDeployPlane} />
       )}
     </div>
   );
