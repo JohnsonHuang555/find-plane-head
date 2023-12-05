@@ -1,19 +1,45 @@
 import { Plane } from '@/games/FindPlaneHead';
-import { generatePlaneA } from '@/helpers/BasicPlanePosition';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
 
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
+  rotateDirection: RotateDirection;
   onCellClick: (x: number, y: number) => void;
+  generatePlane?: (
+    headX: number,
+    headY: number,
+    rotateDirection: RotateDirection
+  ) => Plane[];
+  placedPlanes?: SettingPlane;
 };
 
-const GameBoard = ({ mode, onCellClick }: GameBoardProps) => {
+const GameBoard = ({
+  mode,
+  rotateDirection,
+  onCellClick,
+  generatePlane,
+  placedPlanes,
+}: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
   const handleMouseHoverPosition = (currentX: number, currentY: number) => {
-    const generatedPlane = generatePlaneA(currentX, currentY);
-    setDeployingPlane(generatedPlane);
+    if (generatePlane) {
+      const generatedPlane = generatePlane(currentX, currentY, rotateDirection);
+      setDeployingPlane(generatedPlane);
+    }
   };
+
+  // TODO: 顯示已放置的飛機顏色
+  const showDeployedPlane = useCallback(
+    (x: number, y: number): boolean => {
+      if (placedPlanes) {
+        const planes = Object.values(placedPlanes).find((plane) => plane);
+      }
+      return false;
+    },
+    [placedPlanes]
+  );
 
   // 生成棋盤格的2D數組，用於標識每個格子的顏色
   const generateBoard = () => {
