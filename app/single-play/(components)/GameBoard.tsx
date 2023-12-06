@@ -5,8 +5,8 @@ import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
   rotateDirection: RotateDirection;
-  onCellClick: (x: number, y: number) => void;
-  generatePlane?: (
+  onCellClick: (deployedPlane: Plane[]) => void;
+  deployingPlaneFunc?: (
     headX: number,
     headY: number,
     rotateDirection: RotateDirection
@@ -18,25 +18,40 @@ const GameBoard = ({
   mode,
   rotateDirection,
   onCellClick,
-  generatePlane,
+  deployingPlaneFunc,
   placedPlanes,
 }: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
   const handleMouseHoverPosition = (currentX: number, currentY: number) => {
-    if (generatePlane) {
-      const generatedPlane = generatePlane(currentX, currentY, rotateDirection);
+    if (deployingPlaneFunc) {
+      const generatedPlane = deployingPlaneFunc(
+        currentX,
+        currentY,
+        rotateDirection
+      );
       setDeployingPlane(generatedPlane);
     }
   };
 
-  // TODO: 顯示已放置的飛機顏色
   const showDeployedPlane = useCallback(
-    (x: number, y: number): boolean => {
+    (x: number, y: number): string => {
       if (placedPlanes) {
-        const planes = Object.values(placedPlanes).find((plane) => plane);
+        const allPlanesPosition = Object.values(placedPlanes)
+          .map((plane) => plane.position)
+          .flat();
+        const placed = allPlanesPosition.find(
+          (plane) => plane?.x === x && plane?.y === y
+        );
+        if (placed && placed.isHead) {
+          return 'bg-red-400';
+        } else if (placed) {
+          return 'bg-blue-400';
+        } else {
+          return '';
+        }
       }
-      return false;
+      return '';
     },
     [placedPlanes]
   );
@@ -52,10 +67,13 @@ const GameBoard = ({
         board.push(
           <div
             key={`${i}-${j}`}
-            className={`w-[80px] h-[80px] cursor-pointer border border-solid border-gray-400 hover:bg-slate-300 ${
-              isDeploying ? 'bg-orange-200 hover:bg-orange-200' : ''
-            }`}
-            onClick={() => onCellClick(j, i)}
+            className={`w-[80px] h-[80px] cursor-pointer border-2 border-solid border-white  ${
+              isDeploying ? 'bg-sky-600' : 'bg-slate-400 hover:bg-slate-300'
+            } ${showDeployedPlane(j, i)}`}
+            onClick={() => {
+              onCellClick(deployingPlane);
+              setDeployingPlane([]);
+            }}
             onMouseOver={() => {
               if (mode === 'deployment') {
                 handleMouseHoverPosition(j, i);
@@ -69,7 +87,7 @@ const GameBoard = ({
   };
 
   return (
-    <div className="grid grid-cols-10 grid-rows-10 grid-gap-0 border border-gray-400">
+    <div className="grid grid-cols-10 grid-rows-10 grid-gap-0 border-2 border-white">
       {generateBoard()}
     </div>
   );

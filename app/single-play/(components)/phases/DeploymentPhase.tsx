@@ -1,6 +1,6 @@
 import PapayaButton from '@/components/papaya/PapayaButton';
 import GameBoard from '../GameBoard';
-import { PlaneType } from '@/games/FindPlaneHead';
+import { Plane, PlaneType } from '@/games/FindPlaneHead';
 import { useMemo, useState } from 'react';
 import {
   generatePlaneA,
@@ -22,26 +22,20 @@ export enum RotateDirection {
 export type SettingPlane = {
   [PlaneType.A]: {
     plane: PlaneType.A;
-    headX?: number;
-    headY?: number;
     isSet: boolean;
-    rotateDirection: RotateDirection;
+    position?: Plane[];
     generateFunc: typeof generatePlaneA;
   };
   [PlaneType.B]: {
     plane: PlaneType.B;
-    headX?: number;
-    headY?: number;
     isSet: boolean;
-    rotateDirection: RotateDirection;
+    position?: Plane[];
     generateFunc: typeof generatePlaneB;
   };
   [PlaneType.C]: {
     plane: PlaneType.C;
-    headX?: number;
-    headY?: number;
     isSet: boolean;
-    rotateDirection: RotateDirection;
+    position?: Plane[];
     generateFunc: typeof generatePlaneC;
   };
 };
@@ -53,24 +47,23 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     A: {
       isSet: false,
       plane: PlaneType.A,
-      rotateDirection: RotateDirection.Down,
       generateFunc: generatePlaneA,
     },
     B: {
       isSet: false,
       plane: PlaneType.B,
-      rotateDirection: RotateDirection.Down,
       generateFunc: generatePlaneB,
     },
     C: {
       isSet: false,
       plane: PlaneType.C,
-      rotateDirection: RotateDirection.Down,
       generateFunc: generatePlaneC,
     },
   });
 
-  const generatePlane = useMemo(() => {
+  console.log(settingPlaneMap);
+
+  const needGeneratedPlane = useMemo(() => {
     const plane = Object.values(settingPlaneMap).find((v) => !v.isSet);
     return plane;
   }, [settingPlaneMap]);
@@ -95,14 +88,13 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     }
   };
 
-  const handleCellClick = (x: number, y: number) => {
+  const handleCellClick = (deployedPlane: Plane[]) => {
+    if (deployedPlane.length === 0) return;
     setSettingPlaneMap((state) => {
       const tempState = { ...state };
-      const plane = generatePlane?.plane as PlaneType;
+      const plane = needGeneratedPlane?.plane as PlaneType;
       tempState[plane].isSet = true;
-      tempState[plane].headX = x;
-      tempState[plane].headY = y;
-      tempState[plane].rotateDirection = currentRotateDirection;
+      tempState[plane].position = deployedPlane;
       return tempState;
     });
     setCurrentRotateDirection(RotateDirection.Up);
@@ -115,7 +107,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
         mode="deployment"
         rotateDirection={currentRotateDirection}
         onCellClick={handleCellClick}
-        generatePlane={generatePlane?.generateFunc}
+        deployingPlaneFunc={needGeneratedPlane?.generateFunc}
         placedPlanes={settingPlaneMap}
       />
       <div className="flex gap-3">
