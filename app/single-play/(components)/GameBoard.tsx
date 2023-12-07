@@ -1,11 +1,12 @@
 import { Plane } from '@/games/FindPlaneHead';
 import { useCallback, useState } from 'react';
 import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
+import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
 
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
   rotateDirection: RotateDirection;
-  onCellClick: (deployedPlane: Plane[]) => void;
+  onCellClick: (x: number, y: number, deployedPlane: Plane[]) => void;
   deployingPlaneFunc?: (
     headX: number,
     headY: number,
@@ -37,21 +38,16 @@ const GameBoard = ({
   const showDeployedPlane = useCallback(
     (x: number, y: number): string => {
       if (placedPlanes) {
-        const allPlanesPosition = Object.values(placedPlanes)
-          .map((plane) => plane.position)
-          .flat();
-        const placed = allPlanesPosition.find(
-          (plane) => plane?.x === x && plane?.y === y
-        );
+        const placed = existPlacedPlane(x, y, placedPlanes);
         if (placed && placed.isHead) {
           return 'bg-red-400';
         } else if (placed) {
           return 'bg-blue-400';
         } else {
-          return '';
+          return 'bg-slate-400';
         }
       }
-      return '';
+      return 'bg-slate-400';
     },
     [placedPlanes]
   );
@@ -67,11 +63,11 @@ const GameBoard = ({
         board.push(
           <div
             key={`${i}-${j}`}
-            className={`w-[80px] h-[80px] cursor-pointer border-2 border-solid border-white  ${
-              isDeploying ? 'bg-sky-600' : 'bg-slate-400 hover:bg-slate-300'
-            } ${showDeployedPlane(j, i)}`}
+            className={`w-[80px] h-[80px] cursor-pointer border-2 border-solid hover:opacity-70 border-white ${
+              isDeploying ? 'bg-sky-600' : showDeployedPlane(j, i)
+            }`}
             onClick={() => {
-              onCellClick(deployingPlane);
+              onCellClick(j, i, deployingPlane);
               setDeployingPlane([]);
             }}
             onMouseOver={() => {

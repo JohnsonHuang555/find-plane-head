@@ -3,10 +3,12 @@ import GameBoard from '../GameBoard';
 import { Plane, PlaneType } from '@/games/FindPlaneHead';
 import { useMemo, useState } from 'react';
 import {
+  existPlacedPlane,
   generatePlaneA,
   generatePlaneB,
   generatePlaneC,
 } from '@/helpers/BasicPlanePosition';
+import { Toast } from '@douyinfe/semi-ui';
 
 type DeploymentPhase = {
   onDeployPlane: () => void;
@@ -61,8 +63,6 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     },
   });
 
-  console.log(settingPlaneMap);
-
   const needGeneratedPlane = useMemo(() => {
     const plane = Object.values(settingPlaneMap).find((v) => !v.isSet);
     return plane;
@@ -88,7 +88,17 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     }
   };
 
-  const handleCellClick = (deployedPlane: Plane[]) => {
+  const handleCellClick = (x: number, y: number, deployedPlane: Plane[]) => {
+    const placed = existPlacedPlane(x, y, settingPlaneMap);
+    if (placed) {
+      Toast.error({
+        content: '不能與其他飛機重疊',
+        duration: 3,
+        theme: 'light',
+      });
+      return;
+    }
+
     if (deployedPlane.length === 0) return;
     setSettingPlaneMap((state) => {
       const tempState = { ...state };

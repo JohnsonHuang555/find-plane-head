@@ -1,4 +1,7 @@
-import { RotateDirection } from '@/app/single-play/(components)/phases/DeploymentPhase';
+import {
+  RotateDirection,
+  SettingPlane,
+} from '@/app/single-play/(components)/phases/DeploymentPhase';
 import { Plane, PlaneMap } from '@/games/FindPlaneHead';
 
 export const basicPlanePosition: PlaneMap = {
@@ -271,4 +274,19 @@ export const generatePlaneC = (
         { x: headX + 1, y: headY + 4, isHead: false },
       ];
   }
+};
+
+export const existPlacedPlane = (
+  x: number,
+  y: number,
+  placedPlanes: SettingPlane
+) => {
+  const allPlanesPosition = Object.values(placedPlanes)
+    .map((plane) => plane.position)
+    .flat();
+  const placed = allPlanesPosition.find(
+    (plane) => plane?.x === x && plane?.y === y
+  );
+
+  return placed;
 };

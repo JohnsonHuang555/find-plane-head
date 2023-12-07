@@ -34,12 +34,12 @@ const fire = () => {};
 
 export const FindPlaneHead: Game<FindPlaneHeadState> = {
   name: 'FindPlaneHead',
-  setup: () => {
-    return {
-      playerAPlanes: basicPlanePosition,
-      playerBPlanes: basicPlanePosition,
-    };
-  },
+  // setup: () => {
+  //   return {
+  //     playerAPlanes: basicPlanePosition,
+  //     playerBPlanes: basicPlanePosition,
+  //   };
+  // },
   phases: {
     deployment: {
       // 玩家放置飛機階段
