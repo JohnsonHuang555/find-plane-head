@@ -1,4 +1,7 @@
-import { basicPlanePosition } from '@/helpers/BasicPlanePosition';
+import {
+  basicPlanePosition,
+  generateComputerPlanes,
+} from '@/helpers/BasicPlanePosition';
 import { Game } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
@@ -26,6 +29,12 @@ export type FindPlaneHeadState = {
 };
 
 const placePlane = ({ G }: any, planes: PlaneMap) => {
+  const { A, B, C } = generateComputerPlanes();
+  G.playerBPlanes = {
+    A,
+    B,
+    C,
+  };
   G.playerAPlanes = planes;
 };
 

@@ -1,9 +1,10 @@
 import PapayaButton from '@/components/papaya/PapayaButton';
 import GameBoard from '../GameBoard';
 import { Plane, PlaneMap, PlaneType } from '@/games/FindPlaneHead';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   existPlacedPlane,
+  generateComputerPlanes,
   generatePlaneA,
   generatePlaneB,
   generatePlaneC,

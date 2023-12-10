@@ -7,6 +7,8 @@ import {
   PlaneMap,
 } from '../../games/FindPlaneHead';
 import DeploymentPhase from './(components)/phases/DeploymentPhase';
+import { useEffect } from 'react';
+import { generateComputerPlanes } from '@/helpers/BasicPlanePosition';
 
 const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   G,

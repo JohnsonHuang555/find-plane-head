@@ -290,3 +290,76 @@ export const existPlacedPlane = (
 
   return placed;
 };
+
+const generateRandomPositionAndDirection = () => {
+  const headX = Math.floor(Math.random() * 10);
+  const headY = Math.floor(Math.random() * 10);
+  const direction = Math.floor(Math.random() * 4);
+
+  const directionMap: { [key: number]: RotateDirection } = {
+    0: RotateDirection.Up,
+    1: RotateDirection.Left,
+    2: RotateDirection.Down,
+    3: RotateDirection.Right,
+  };
+
+  return {
+    headX,
+    headY,
+    direction: directionMap[direction],
+  };
+};
+
+const checkCorrectPosition = (plane: Plane[], otherPlanes?: Plane[]) => {
+  const outOfRange = plane.find(
+    (p) => p.x < 0 || p.y < 0 || p.x >= 10 || p.y >= 10
+  );
+  if (outOfRange) {
+    return false;
+  }
+  const overlayOthers = plane.some(
+    (p) => !!otherPlanes?.find((o) => p.x === o.x && p.y === o.y)
+  );
+  if (overlayOthers) {
+    return false;
+  }
+  return true;
+};
+
+export const generateComputerPlanes = (): PlaneMap => {
+  const {
+    headX: AHeadX,
+    headY: AHeadY,
+    direction: ADirection,
+  } = generateRandomPositionAndDirection();
+  const planeA = generatePlaneA(AHeadX, AHeadY, ADirection);
+  if (!checkCorrectPosition(planeA)) {
+    return generateComputerPlanes();
+  }
+
+  const {
+    headX: BHeadX,
+    headY: BHeadY,
+    direction: BDirection,
+  } = generateRandomPositionAndDirection();
+  const planeB = generatePlaneB(BHeadX, BHeadY, BDirection);
+  if (!checkCorrectPosition(planeB, planeA)) {
+    return generateComputerPlanes();
+  }
+
+  const {
+    headX: CHeadX,
+    headY: CHeadY,
+    direction: CDirection,
+  } = generateRandomPositionAndDirection();
+  const planeC = generatePlaneC(CHeadX, CHeadY, CDirection);
+  if (!checkCorrectPosition(planeC, [...planeA, ...planeB])) {
+    return generateComputerPlanes();
+  }
+
+  return {
+    A: planeA,
+    B: planeB,
+    C: planeC,
+  };
+};
