@@ -1,9 +1,6 @@
-import {
-  basicPlanePosition,
-  generateComputerPlanes,
-} from '@/helpers/BasicPlanePosition';
+import { generateComputerPlanes } from '@/helpers/BasicPlanePosition';
 import { Game } from 'boardgame.io';
-import { INVALID_MOVE } from 'boardgame.io/core';
+import { TurnOrder } from 'boardgame.io/core';
 
 export enum PlaneType {
   A = 'A',
@@ -28,7 +25,7 @@ export type FindPlaneHeadState = {
   playerBPlanes: PlaneMap;
 };
 
-const placePlane = ({ G }: any, planes: PlaneMap) => {
+const placePlane = ({ G, events }: any, planes: PlaneMap) => {
   const { A, B, C } = generateComputerPlanes();
   G.playerBPlanes = {
     A,
@@ -36,9 +33,13 @@ const placePlane = ({ G }: any, planes: PlaneMap) => {
     C,
   };
   G.playerAPlanes = planes;
+  events.endPhase();
 };
 
-const fire = () => {};
+const fire = ({ G, events }: any, x: number, y: number) => {
+  console.log('fire', 'dddddd');
+  events.endTurn();
+};
 
 export const FindPlaneHead: Game<FindPlaneHeadState> = {
   name: 'FindPlaneHead',
@@ -58,10 +59,12 @@ export const FindPlaneHead: Game<FindPlaneHeadState> = {
       },
     },
   },
-  // turn: {
-  //   moveLimit: 1,
-  // },
-  turn: {},
-  moves: {},
-  endIf: () => {},
+  turn: {
+    order: TurnOrder.RESET,
+  },
+  ai: {
+    enumerate: (G, ctx) => {
+      return [{ move: 'fire' }];
+    },
+  },
 };

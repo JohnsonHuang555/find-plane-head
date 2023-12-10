@@ -5,27 +5,31 @@ import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
 
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
-  rotateDirection: RotateDirection;
-  onCellClick: (deployedPlane: Plane[]) => void;
+  rotateDirection?: RotateDirection;
+  onCellClick?: (deployedPlane: Plane[]) => void;
+  onFire?: (x: number, y: number) => void;
   deployingPlaneFunc?: (
     headX: number,
     headY: number,
     rotateDirection: RotateDirection
   ) => Plane[];
   placedPlanes?: SettingPlane;
+  disableHover?: boolean;
 };
 
 const GameBoard = ({
   mode,
   rotateDirection,
   onCellClick,
+  onFire,
   deployingPlaneFunc,
   placedPlanes,
+  disableHover = false,
 }: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
   const handleMouseHoverPosition = (currentX: number, currentY: number) => {
-    if (deployingPlaneFunc) {
+    if (deployingPlaneFunc && rotateDirection) {
       const generatedPlane = deployingPlaneFunc(
         currentX,
         currentY,
@@ -63,11 +67,19 @@ const GameBoard = ({
         board.push(
           <div
             key={`${i}-${j}`}
-            className={`w-[80px] h-[80px] cursor-pointer border-2 border-solid hover:opacity-70 border-white ${
+            className={`w-[80px] h-[80px] border-2 border-solid border-white ${
               isDeploying ? 'bg-sky-600' : showDeployedPlane(j, i)
+            } ${
+              !disableHover
+                ? 'cursor-pointer hover:opacity-70'
+                : 'cursor-default'
             }`}
             onClick={() => {
-              onCellClick(deployingPlane);
+              if (mode === 'deployment') {
+                onCellClick && onCellClick(deployingPlane);
+              } else {
+                onFire && onFire(j, i);
+              }
               setDeployingPlane([]);
             }}
             onMouseOver={() => {

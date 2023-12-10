@@ -1,26 +1,25 @@
 'use client';
 
 import { BoardProps, Client } from 'boardgame.io/react';
+import { Local } from 'boardgame.io/multiplayer';
 import {
   FindPlaneHead,
   FindPlaneHeadState,
   PlaneMap,
 } from '../../games/FindPlaneHead';
 import DeploymentPhase from './(components)/phases/DeploymentPhase';
-import { useEffect } from 'react';
-import { generateComputerPlanes } from '@/helpers/BasicPlanePosition';
+import FiringPhase from './(components)/phases/FiringPhase';
 
 const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
-  G,
   moves,
-  events,
   ctx,
 }) => {
   const handleDeployPlane = (planes: PlaneMap) => {
     moves.placePlane(planes);
-    if (events.endPhase) {
-      events.endPhase();
-    }
+  };
+
+  const handleFire = (x: number, y: number) => {
+    moves.fire(x, y);
   };
 
   return (
@@ -28,9 +27,9 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
       {ctx.phase === 'deployment' && (
         <DeploymentPhase onDeployPlane={handleDeployPlane} />
       )}
-      {/* {ctx.phase === 'firing' && (
-        <DeploymentPhase onDeployPlane={handleDeployPlane} />
-      )} */}
+      {ctx.phase === 'firing' && (
+        <FiringPhase yourTurn={ctx.currentPlayer === '0'} onFire={handleFire} />
+      )}
     </div>
   );
 };
