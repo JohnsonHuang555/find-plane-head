@@ -1,6 +1,6 @@
 import PapayaButton from '@/components/papaya/PapayaButton';
 import GameBoard from '../GameBoard';
-import { Plane, PlaneType } from '@/games/FindPlaneHead';
+import { Plane, PlaneMap, PlaneType } from '@/games/FindPlaneHead';
 import { useMemo, useState } from 'react';
 import {
   existPlacedPlane,
@@ -11,7 +11,7 @@ import {
 import { Toast } from '@douyinfe/semi-ui';
 
 type DeploymentPhase = {
-  onDeployPlane: () => void;
+  onDeployPlane: (planes: PlaneMap) => void;
 };
 
 export enum RotateDirection {
@@ -68,7 +68,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     return plane;
   }, [settingPlaneMap]);
 
-  const rotatePlane = () => {
+  const handleRotatePlane = () => {
     switch (currentRotateDirection) {
       case RotateDirection.Up:
         setCurrentRotateDirection(RotateDirection.Left);
@@ -88,11 +88,39 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     }
   };
 
-  const handleCellClick = (x: number, y: number, deployedPlane: Plane[]) => {
-    const placed = existPlacedPlane(x, y, settingPlaneMap);
-    if (placed) {
+  const handleResetPlane = () => {
+    setSettingPlaneMap((state) => {
+      const tempState = { ...state };
+      tempState[PlaneType.A].isSet = false;
+      tempState[PlaneType.A].position = undefined;
+      tempState[PlaneType.B].isSet = false;
+      tempState[PlaneType.B].position = undefined;
+      tempState[PlaneType.C].isSet = false;
+      tempState[PlaneType.C].position = undefined;
+      return tempState;
+    });
+  };
+
+  const handleCellClick = (deployedPlane: Plane[]) => {
+    const overlayPlane = deployedPlane.some((d) => {
+      return !!existPlacedPlane(d.x, d.y, settingPlaneMap);
+    });
+    const overRange = deployedPlane.some((d) => {
+      return d.x < 0 || d.y < 0 || d.x >= 10 || d.y >= 10;
+    });
+
+    if (overlayPlane) {
       Toast.error({
         content: '不能與其他飛機重疊',
+        duration: 3,
+        theme: 'light',
+      });
+      return;
+    }
+
+    if (overRange) {
+      Toast.error({
+        content: '超出範圍',
         duration: 3,
         theme: 'light',
       });
@@ -110,9 +138,20 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     setCurrentRotateDirection(RotateDirection.Up);
   };
 
+  const handleDeployPlane = () => {
+    onDeployPlane({
+      A: settingPlaneMap[PlaneType.A].position as Plane[],
+      B: settingPlaneMap[PlaneType.B].position as Plane[],
+      C: settingPlaneMap[PlaneType.C].position as Plane[],
+    });
+  };
+
   return (
     <>
-      <div className="mb-6 text-2xl">設置飛機</div>
+      <div className="mb-2 text-2xl">設置飛機</div>
+      <div className="mb-6 text-base">
+        請放置三架飛機，使用旋轉按鈕改變飛機方向，使用清除重新放置飛機
+      </div>
       <GameBoard
         mode="deployment"
         rotateDirection={currentRotateDirection}
@@ -126,6 +165,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
           size="large"
           theme="light"
           type="primary"
+          onClick={handleResetPlane}
         >
           清除
         </PapayaButton>
@@ -134,16 +174,17 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
           size="large"
           theme="light"
           type="primary"
-          onClick={rotatePlane}
+          onClick={handleRotatePlane}
         >
           旋轉
         </PapayaButton>
         <PapayaButton
+          disabled={!!needGeneratedPlane}
           className="w-[200px] mt-6"
           size="large"
           theme="solid"
           type="primary"
-          onClick={onDeployPlane}
+          onClick={handleDeployPlane}
         >
           完成
         </PapayaButton>

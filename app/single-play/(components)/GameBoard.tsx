@@ -6,7 +6,7 @@ import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
   rotateDirection: RotateDirection;
-  onCellClick: (x: number, y: number, deployedPlane: Plane[]) => void;
+  onCellClick: (deployedPlane: Plane[]) => void;
   deployingPlaneFunc?: (
     headX: number,
     headY: number,
@@ -67,7 +67,7 @@ const GameBoard = ({
               isDeploying ? 'bg-sky-600' : showDeployedPlane(j, i)
             }`}
             onClick={() => {
-              onCellClick(j, i, deployingPlane);
+              onCellClick(deployingPlane);
               setDeployingPlane([]);
             }}
             onMouseOver={() => {

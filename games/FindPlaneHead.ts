@@ -25,21 +25,14 @@ export type FindPlaneHeadState = {
   playerBPlanes: PlaneMap;
 };
 
-const placePlane = ({ G }: any, x: number, y: number) => {
-  // 檢查該艦艇是否已經被放置
-  // 更新遊戲狀態，放置艦艇
+const placePlane = ({ G }: any, planes: PlaneMap) => {
+  G.playerAPlanes = planes;
 };
 
 const fire = () => {};
 
 export const FindPlaneHead: Game<FindPlaneHeadState> = {
   name: 'FindPlaneHead',
-  // setup: () => {
-  //   return {
-  //     playerAPlanes: basicPlanePosition,
-  //     playerBPlanes: basicPlanePosition,
-  //   };
-  // },
   phases: {
     deployment: {
       // 玩家放置飛機階段
@@ -48,10 +41,6 @@ export const FindPlaneHead: Game<FindPlaneHeadState> = {
       },
       start: true,
       next: 'firing',
-      endIf: ({ G }) => {
-        if (G.playerAPlanes) {
-        }
-      },
     },
     firing: {
       // 玩家開始攻擊階段
