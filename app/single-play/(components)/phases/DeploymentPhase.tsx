@@ -158,6 +158,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
         rotateDirection={currentRotateDirection}
         onCellClick={handleCellClick}
         deployingPlaneFunc={needGeneratedPlane?.generateFunc}
+        isAllPlaced={!needGeneratedPlane}
         placedPlanes={settingPlaneMap}
       />
       <div className="flex gap-3">

@@ -1,24 +1,42 @@
+import { BoardCell } from '@/games/FindPlaneHead';
 import GameBoard from '../GameBoard';
 
 type FiringPhaseProps = {
-  yourTurn: boolean;
+  isYourTurn: boolean;
+  playerBoard: BoardCell[];
+  computerBoard: BoardCell[];
   onFire: (x: number, y: number) => void;
 };
 
-const FiringPhase = ({ yourTurn, onFire }: FiringPhaseProps) => {
+const FiringPhase = ({
+  isYourTurn,
+  playerBoard,
+  computerBoard,
+  onFire,
+}: FiringPhaseProps) => {
   return (
     <div>
       <div className="text-center text-2xl mb-5">
-        {yourTurn ? '你的回合' : '電腦回合'}
+        {isYourTurn ? '你的回合' : '電腦回合'}
       </div>
       <div className="flex flex-col gap-12 laptop:flex-row">
         <div className="flex-1">
           <div className="text-center text-xl mb-2">YOU</div>
-          <GameBoard mode="firing" disableHover={true} />
+          <GameBoard
+            mode="firing"
+            disableHover={true}
+            firingBoard={playerBoard}
+            isYourTurn={isYourTurn}
+          />
         </div>
         <div className="flex-1">
           <div className="text-center text-xl mb-2">電腦</div>
-          <GameBoard mode="firing" onFire={onFire} />
+          <GameBoard
+            mode="firing"
+            onFire={onFire}
+            firingBoard={computerBoard}
+            isYourTurn={isYourTurn}
+          />
         </div>
       </div>
     </div>

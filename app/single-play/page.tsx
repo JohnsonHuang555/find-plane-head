@@ -11,6 +11,7 @@ import DeploymentPhase from './(components)/phases/DeploymentPhase';
 import FiringPhase from './(components)/phases/FiringPhase';
 
 const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
+  G,
   moves,
   ctx,
 }) => {
@@ -19,7 +20,7 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   };
 
   const handleFire = (x: number, y: number) => {
-    moves.fire(x, y);
+    moves.playerFire(x, y);
   };
 
   return (
@@ -28,7 +29,12 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
         <DeploymentPhase onDeployPlane={handleDeployPlane} />
       )}
       {ctx.phase === 'firing' && (
-        <FiringPhase yourTurn={ctx.currentPlayer === '0'} onFire={handleFire} />
+        <FiringPhase
+          isYourTurn={ctx.currentPlayer === '0'}
+          playerBoard={G.playerBoard}
+          computerBoard={G.computerBoard}
+          onFire={handleFire}
+        />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Plane } from '@/games/FindPlaneHead';
+import { BoardCell, Plane } from '@/games/FindPlaneHead';
 import { useCallback, useState } from 'react';
 import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
 import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
@@ -15,6 +15,9 @@ type GameBoardProps = {
   ) => Plane[];
   placedPlanes?: SettingPlane;
   disableHover?: boolean;
+  isAllPlaced?: boolean;
+  firingBoard?: BoardCell[];
+  isYourTurn?: boolean;
 };
 
 const GameBoard = ({
@@ -25,6 +28,9 @@ const GameBoard = ({
   deployingPlaneFunc,
   placedPlanes,
   disableHover = false,
+  isAllPlaced = false,
+  firingBoard,
+  isYourTurn,
 }: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
@@ -41,7 +47,7 @@ const GameBoard = ({
 
   const showDeployedPlane = useCallback(
     (x: number, y: number): string => {
-      if (placedPlanes) {
+      if (mode === 'deployment' && placedPlanes) {
         const placed = existPlacedPlane(x, y, placedPlanes);
         if (placed && placed.isHead) {
           return 'bg-red-400';
@@ -51,9 +57,35 @@ const GameBoard = ({
           return 'bg-slate-400';
         }
       }
+      // FIXME:
+      if (mode === 'firing' && firingBoard) {
+        const cell = firingBoard.find((b) => b.index === 10 * y + x);
+        if (isYourTurn) {
+          if (cell?.isPlaneHead) {
+            return 'bg-red-400';
+          } else if (cell?.isPlaneBody) {
+            return 'bg-blue-400';
+          } else if (cell?.isReveal) {
+            return 'bg-stone-400';
+          } else {
+            return 'bg-slate-400';
+          }
+        } else {
+          if (cell?.isReveal) {
+            if (cell?.isPlaneHead) {
+              return 'bg-red-400';
+            } else if (cell?.isPlaneBody) {
+              return 'bg-blue-400';
+            } else {
+              return 'bg-stone-400';
+            }
+          }
+          return 'bg-slate-400';
+        }
+      }
       return 'bg-slate-400';
     },
-    [placedPlanes]
+    [firingBoard, isYourTurn, mode, placedPlanes]
   );
 
   // 生成棋盤格的2D數組，用於標識每個格子的顏色
@@ -68,7 +100,9 @@ const GameBoard = ({
           <div
             key={`${i}-${j}`}
             className={`w-[80px] h-[80px] border-2 border-solid border-white ${
-              isDeploying ? 'bg-sky-600' : showDeployedPlane(j, i)
+              isDeploying && !isAllPlaced
+                ? 'bg-sky-600'
+                : showDeployedPlane(j, i)
             } ${
               !disableHover
                 ? 'cursor-pointer hover:opacity-70'
@@ -80,7 +114,6 @@ const GameBoard = ({
               } else {
                 onFire && onFire(j, i);
               }
-              setDeployingPlane([]);
             }}
             onMouseOver={() => {
               if (mode === 'deployment') {

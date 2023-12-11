@@ -20,29 +20,83 @@ export type PlaneMap = {
   [PlaneType.C]: Plane[];
 };
 
+export type BoardCell = {
+  index: number;
+  isReveal?: boolean;
+  isPlaneHead?: boolean;
+  isPlaneBody?: boolean;
+};
+
 export type FindPlaneHeadState = {
-  playerAPlanes: PlaneMap;
-  playerBPlanes: PlaneMap;
+  playerBoard: BoardCell[];
+  computerBoard: BoardCell[];
 };
 
 const placePlane = ({ G, events }: any, planes: PlaneMap) => {
   const { A, B, C } = generateComputerPlanes();
-  G.playerBPlanes = {
-    A,
-    B,
-    C,
-  };
-  G.playerAPlanes = planes;
+  const allPlayerPlanePositions = Object.values(planes).flat();
+  const playerBoard: BoardCell[] = G.playerBoard.map((b: BoardCell) => {
+    const plane = allPlayerPlanePositions.find(
+      (p) => 10 * p.y + p.x === b.index
+    );
+    if (plane) {
+      return {
+        ...b,
+        isPlaneHead: plane.isHead,
+        isPlaneBody: !plane.isHead,
+      };
+    }
+    return b;
+  });
+  G.playerBoard = playerBoard;
+
+  const allComputerPlanePositions = [...A, ...B, ...C];
+  const computerBoard: BoardCell[] = G.computerBoard.map((b: BoardCell) => {
+    const plane = allComputerPlanePositions.find(
+      (p) => 10 * p.y + p.x === b.index
+    );
+    if (plane) {
+      return {
+        ...b,
+        isPlaneHead: plane.isHead,
+        isPlaneBody: !plane.isHead,
+      };
+    }
+    return b;
+  });
+  G.computerBoard = computerBoard;
   events.endPhase();
 };
 
-const fire = ({ G, events }: any, x: number, y: number) => {
-  console.log('fire', 'dddddd');
+const playerFire = ({ G, events }: any, x: number, y: number) => {
+  const data = [...G.computerBoard];
+  const targetCellIndex = G.computerBoard.findIndex(
+    (b: BoardCell) => 10 * y + x === b.index
+  );
+  data[targetCellIndex].isPlaneHead =
+    G.computerBoard[targetCellIndex].isPlaneHead;
+  data[targetCellIndex].isPlaneBody =
+    G.computerBoard[targetCellIndex].isPlaneBody;
+  data[targetCellIndex].isReveal = true;
+
+  G.computerBoard = data;
+  events.endTurn();
+};
+
+const computerFire = ({ G, events }: any, x: number, y: number) => {
   events.endTurn();
 };
 
 export const FindPlaneHead: Game<FindPlaneHeadState> = {
   name: 'FindPlaneHead',
+  setup: () => ({
+    playerBoard: Array(100)
+      .fill(null)
+      .map((_, index) => ({ index, isReveal: false })),
+    computerBoard: Array(100)
+      .fill(null)
+      .map((_, index) => ({ index, isReveal: false })),
+  }),
   phases: {
     deployment: {
       // 玩家放置飛機階段
@@ -55,7 +109,8 @@ export const FindPlaneHead: Game<FindPlaneHeadState> = {
     firing: {
       // 玩家開始攻擊階段
       moves: {
-        fire,
+        playerFire,
+        computerFire,
       },
     },
   },
