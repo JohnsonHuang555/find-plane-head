@@ -26,7 +26,7 @@ const FiringPhase = ({
             mode="firing"
             disableHover={true}
             firingBoard={playerBoard}
-            isYourTurn={isYourTurn}
+            isPlayer={true}
           />
         </div>
         <div className="flex-1">
@@ -35,7 +35,7 @@ const FiringPhase = ({
             mode="firing"
             onFire={onFire}
             firingBoard={computerBoard}
-            isYourTurn={isYourTurn}
+            isComputer={true}
           />
         </div>
       </div>

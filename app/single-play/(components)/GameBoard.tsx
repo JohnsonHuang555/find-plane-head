@@ -17,7 +17,8 @@ type GameBoardProps = {
   disableHover?: boolean;
   isAllPlaced?: boolean;
   firingBoard?: BoardCell[];
-  isYourTurn?: boolean;
+  isPlayer?: boolean;
+  isComputer?: boolean;
 };
 
 const GameBoard = ({
@@ -30,7 +31,8 @@ const GameBoard = ({
   disableHover = false,
   isAllPlaced = false,
   firingBoard,
-  isYourTurn,
+  isPlayer,
+  isComputer,
 }: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
@@ -57,10 +59,9 @@ const GameBoard = ({
           return 'bg-slate-400';
         }
       }
-      // FIXME:
       if (mode === 'firing' && firingBoard) {
         const cell = firingBoard.find((b) => b.index === 10 * y + x);
-        if (isYourTurn) {
+        if (isPlayer) {
           if (cell?.isPlaneHead) {
             return 'bg-red-400';
           } else if (cell?.isPlaneBody) {
@@ -70,7 +71,8 @@ const GameBoard = ({
           } else {
             return 'bg-slate-400';
           }
-        } else {
+        }
+        if (isComputer) {
           if (cell?.isReveal) {
             if (cell?.isPlaneHead) {
               return 'bg-red-400';
@@ -85,7 +87,7 @@ const GameBoard = ({
       }
       return 'bg-slate-400';
     },
-    [firingBoard, isYourTurn, mode, placedPlanes]
+    [firingBoard, isComputer, isPlayer, mode, placedPlanes]
   );
 
   // 生成棋盤格的2D數組，用於標識每個格子的顏色
