@@ -1,7 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
 import { BoardProps, Client } from 'boardgame.io/react';
-import { Local } from 'boardgame.io/multiplayer';
 import {
   FindPlaneHead,
   FindPlaneHeadState,
@@ -15,13 +15,22 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   moves,
   ctx,
 }) => {
+  const isYourTurn = ctx.currentPlayer === '0';
   const handleDeployPlane = (planes: PlaneMap) => {
     moves.placePlane(planes);
   };
 
   const handleFire = (x: number, y: number) => {
-    moves.playerFire(x, y);
+    if (isYourTurn) {
+      moves.playerFire(x, y);
+    }
   };
+
+  useEffect(() => {
+    if (!isYourTurn) {
+      moves.computerFire();
+    }
+  }, [isYourTurn, moves]);
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -30,7 +39,7 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
       )}
       {ctx.phase === 'firing' && (
         <FiringPhase
-          isYourTurn={ctx.currentPlayer === '0'}
+          isYourTurn={isYourTurn}
           playerBoard={G.playerBoard}
           computerBoard={G.computerBoard}
           onFire={handleFire}

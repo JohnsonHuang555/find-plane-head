@@ -1,4 +1,7 @@
-import { generateComputerPlanes } from '@/helpers/BasicPlanePosition';
+import {
+  generateComputerPlanes,
+  generateComputerPosition,
+} from '@/helpers/BasicPlanePosition';
 import { Game } from 'boardgame.io';
 import { TurnOrder } from 'boardgame.io/core';
 
@@ -83,7 +86,19 @@ const playerFire = ({ G, events }: any, x: number, y: number) => {
   events.endTurn();
 };
 
-const computerFire = ({ G, events }: any, x: number, y: number) => {
+const computerFire = ({ G, events }: any) => {
+  const data = [...G.playerBoard];
+  const { headX, headY } = generateComputerPosition();
+  const targetCellIndex = G.playerBoard.findIndex(
+    (b: BoardCell) => 10 * headY + headX === b.index
+  );
+  data[targetCellIndex].isPlaneHead =
+    G.playerBoard[targetCellIndex].isPlaneHead;
+  data[targetCellIndex].isPlaneBody =
+    G.playerBoard[targetCellIndex].isPlaneBody;
+  data[targetCellIndex].isReveal = true;
+
+  G.playerBoard = data;
   events.endTurn();
 };
 

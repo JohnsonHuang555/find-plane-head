@@ -90,6 +90,26 @@ const GameBoard = ({
     [firingBoard, isComputer, isPlayer, mode, placedPlanes]
   );
 
+  const showHit = useCallback(
+    (x: number, y: number): boolean => {
+      if (mode === 'firing' && firingBoard) {
+        const cell = firingBoard.find((b) => b.index === 10 * y + x);
+        if (isPlayer && cell?.isReveal) {
+          if (cell.isPlaneBody || cell.isPlaneHead) {
+            return true;
+          }
+        }
+        if (isComputer && cell?.isReveal) {
+          if (cell.isPlaneBody || cell.isPlaneHead) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    [firingBoard, isComputer, isPlayer, mode]
+  );
+
   // 生成棋盤格的2D數組，用於標識每個格子的顏色
   const generateBoard = () => {
     const board = [];
@@ -101,7 +121,7 @@ const GameBoard = ({
         board.push(
           <div
             key={`${i}-${j}`}
-            className={`w-[80px] h-[80px] border-2 border-solid border-white ${
+            className={`relative w-[80px] h-[80px] border-2 border-solid border-white flex items-center justify-center ${
               isDeploying && !isAllPlaced
                 ? 'bg-sky-600'
                 : showDeployedPlane(j, i)
@@ -122,7 +142,13 @@ const GameBoard = ({
                 handleMouseHoverPosition(j, i);
               }
             }}
-          />
+          >
+            <div
+              className={`w-[30px] h-[30px] rounded-full ${
+                showHit(j, i) ? 'bg-amber-200' : ''
+              }`}
+            />
+          </div>
         );
       }
     }

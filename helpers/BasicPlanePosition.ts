@@ -322,3 +322,15 @@ export const generateComputerPlanes = (): PlaneMap => {
     C: planeC,
   };
 };
+
+/** 電腦下棋邏輯 */
+export const generateComputerPosition = (playedPositions?: []) => {
+  const headX = Math.floor(Math.random() * 10);
+  const headY = Math.floor(Math.random() * 10);
+
+  console.log(headX, headY);
+  return {
+    headX,
+    headY,
+  };
+};
