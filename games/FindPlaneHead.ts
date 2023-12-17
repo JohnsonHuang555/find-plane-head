@@ -1,4 +1,5 @@
 import {
+  checkIsGameOver,
   generateComputerPlanes,
   generateComputerPosition,
 } from '@/helpers/BasicPlanePosition';
@@ -72,7 +73,14 @@ const placePlane = ({ G, events }: any, planes: PlaneMap) => {
 };
 
 const playerFire = ({ G, events }: any, x: number, y: number) => {
+  // if (checkValidFire(x, y, G.computerBoard)) {
+  //   return;
+  // }
   const data = [...G.computerBoard];
+  const isAlreadyReveal = data.find((b) => y * 10 + x === b.index);
+  if (isAlreadyReveal?.isReveal) {
+    return;
+  }
   const targetCellIndex = G.computerBoard.findIndex(
     (b: BoardCell) => 10 * y + x === b.index
   );
@@ -88,7 +96,7 @@ const playerFire = ({ G, events }: any, x: number, y: number) => {
 
 const computerFire = ({ G, events }: any) => {
   const data = [...G.playerBoard];
-  const { headX, headY } = generateComputerPosition();
+  const { headX, headY } = generateComputerPosition(G.playerBoard);
   const targetCellIndex = G.playerBoard.findIndex(
     (b: BoardCell) => 10 * headY + headX === b.index
   );
@@ -112,6 +120,14 @@ export const FindPlaneHead: Game<FindPlaneHeadState> = {
       .fill(null)
       .map((_, index) => ({ index, isReveal: false })),
   }),
+  endIf: ({ G }) => {
+    if (checkIsGameOver(G.playerBoard)) {
+      return { winner: '你輸了' };
+    }
+    if (checkIsGameOver(G.computerBoard)) {
+      return { winner: '你獲勝了' };
+    }
+  },
   phases: {
     deployment: {
       // 玩家放置飛機階段
@@ -131,10 +147,5 @@ export const FindPlaneHead: Game<FindPlaneHeadState> = {
   },
   turn: {
     order: TurnOrder.RESET,
-  },
-  ai: {
-    enumerate: (G, ctx) => {
-      return [{ move: 'fire' }];
-    },
   },
 };

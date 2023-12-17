@@ -9,12 +9,15 @@ import {
 } from '../../games/FindPlaneHead';
 import DeploymentPhase from './(components)/phases/DeploymentPhase';
 import FiringPhase from './(components)/phases/FiringPhase';
+import { Modal } from '@douyinfe/semi-ui';
+import { useRouter } from 'next/navigation';
 
 const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   G,
   moves,
   ctx,
 }) => {
+  const router = useRouter();
   const isYourTurn = ctx.currentPlayer === '0';
   const handleDeployPlane = (planes: PlaneMap) => {
     moves.placePlane(planes);
@@ -27,8 +30,25 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   };
 
   useEffect(() => {
+    if (ctx.gameover) {
+      Modal.info({
+        title: '提示',
+        content: ctx.gameover.winner,
+        centered: true,
+        icon: null,
+        hasCancel: false,
+        onOk: () => {
+          router.replace('/');
+        },
+      });
+    }
+  }, [ctx.gameover, router]);
+
+  useEffect(() => {
     if (!isYourTurn) {
+      // setTimeout(() => {
       moves.computerFire();
+      // }, 1500);
     }
   }, [isYourTurn, moves]);
 
@@ -37,7 +57,7 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
       {ctx.phase === 'deployment' && (
         <DeploymentPhase onDeployPlane={handleDeployPlane} />
       )}
-      {ctx.phase === 'firing' && (
+      {(ctx.phase === 'firing' || ctx.gameover) && (
         <FiringPhase
           isYourTurn={isYourTurn}
           playerBoard={G.playerBoard}

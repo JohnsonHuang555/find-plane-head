@@ -2,7 +2,7 @@ import {
   RotateDirection,
   SettingPlane,
 } from '@/app/single-play/(components)/phases/DeploymentPhase';
-import { Plane, PlaneMap } from '@/games/FindPlaneHead';
+import { BoardCell, Plane, PlaneMap } from '@/games/FindPlaneHead';
 
 export const generatePlaneA = (
   headX: number,
@@ -324,13 +324,22 @@ export const generateComputerPlanes = (): PlaneMap => {
 };
 
 /** 電腦下棋邏輯 */
-export const generateComputerPosition = (playedPositions?: []) => {
+export const generateComputerPosition = (
+  board?: BoardCell[]
+): { headX: number; headY: number } => {
   const headX = Math.floor(Math.random() * 10);
   const headY = Math.floor(Math.random() * 10);
 
-  console.log(headX, headY);
   return {
     headX,
     headY,
   };
+};
+
+export const checkIsGameOver = (board: BoardCell[]): boolean => {
+  const isFindAllHeads = board.filter((b) => b.isPlaneHead && b.isReveal);
+  if (isFindAllHeads.length === 3) {
+    return true;
+  }
+  return false;
 };
