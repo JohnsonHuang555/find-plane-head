@@ -325,15 +325,23 @@ export const generateComputerPlanes = (): PlaneMap => {
 
 /** 電腦下棋邏輯 */
 export const generateComputerPosition = (
+  x: number,
+  y: number,
   board?: BoardCell[]
 ): { headX: number; headY: number } => {
-  const headX = Math.floor(Math.random() * 10);
-  const headY = Math.floor(Math.random() * 10);
+  const obj = board?.find((b) => b.index === y * 10 + x);
+  if (obj?.isReveal === false) {
+    return {
+      headX: x,
+      headY: y,
+    };
+  }
 
-  return {
-    headX,
-    headY,
-  };
+  return generateComputerPosition(
+    Math.floor(Math.random() * 10),
+    Math.floor(Math.random() * 10),
+    board
+  );
 };
 
 export const checkIsGameOver = (board: BoardCell[]): boolean => {

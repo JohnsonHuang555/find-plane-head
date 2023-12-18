@@ -73,9 +73,6 @@ const placePlane = ({ G, events }: any, planes: PlaneMap) => {
 };
 
 const playerFire = ({ G, events }: any, x: number, y: number) => {
-  // if (checkValidFire(x, y, G.computerBoard)) {
-  //   return;
-  // }
   const data = [...G.computerBoard];
   const isAlreadyReveal = data.find((b) => y * 10 + x === b.index);
   if (isAlreadyReveal?.isReveal) {
@@ -96,7 +93,10 @@ const playerFire = ({ G, events }: any, x: number, y: number) => {
 
 const computerFire = ({ G, events }: any) => {
   const data = [...G.playerBoard];
-  const { headX, headY } = generateComputerPosition(G.playerBoard);
+  const x = Math.floor(Math.random() * 10);
+  const y = Math.floor(Math.random() * 10);
+  const { headX, headY } = generateComputerPosition(x, y, data);
+  console.log(headX, headY);
   const targetCellIndex = G.playerBoard.findIndex(
     (b: BoardCell) => 10 * headY + headX === b.index
   );
