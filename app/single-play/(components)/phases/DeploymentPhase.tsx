@@ -1,7 +1,7 @@
 import PapayaButton from '@/components/papaya/PapayaButton';
 import GameBoard from '../GameBoard';
 import { Plane, PlaneMap, PlaneType } from '@/games/FindPlaneHead';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   existPlacedPlane,
   generateComputerPlanes,
@@ -69,7 +69,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     return plane;
   }, [settingPlaneMap]);
 
-  const handleRotatePlane = () => {
+  const handleRotatePlane = useCallback(() => {
     switch (currentRotateDirection) {
       case RotateDirection.Up:
         setCurrentRotateDirection(RotateDirection.Left);
@@ -87,7 +87,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
         setCurrentRotateDirection(RotateDirection.Up);
         break;
     }
-  };
+  }, [currentRotateDirection]);
 
   const handleResetPlane = () => {
     setSettingPlaneMap((state) => {
@@ -147,11 +147,27 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     });
   };
 
+  const handleKeyClick = useCallback(
+    (e: any) => {
+      if (e.key === 'q') {
+        handleRotatePlane();
+      }
+    },
+    [handleRotatePlane]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyClick, false);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyClick);
+    };
+  }, [handleKeyClick]);
   return (
     <>
       <div className="mb-2 text-2xl">設置飛機</div>
       <div className="mb-6 text-base">
-        請放置三架飛機，使用旋轉按鈕改變飛機方向，使用清除重新放置飛機
+        請放置三架飛機，使用旋轉按鈕或 Q 鍵改變飛機方向，使用清除重新放置飛機
       </div>
       <GameBoard
         mode="deployment"

@@ -46,9 +46,9 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
 
   useEffect(() => {
     if (!isYourTurn) {
-      // setTimeout(() => {
-      moves.computerFire();
-      // }, 1500);
+      setTimeout(() => {
+        moves.computerFire();
+      }, 1000);
     }
   }, [isYourTurn, moves]);
 
