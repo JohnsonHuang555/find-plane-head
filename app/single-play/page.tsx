@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Modal } from '@douyinfe/semi-ui';
 import { BoardProps, Client } from 'boardgame.io/react';
 import {
   FindPlaneHead,
@@ -9,7 +10,6 @@ import {
 } from '../../games/FindPlaneHead';
 import DeploymentPhase from './(components)/phases/DeploymentPhase';
 import FiringPhase from './(components)/phases/FiringPhase';
-import { Modal } from '@douyinfe/semi-ui';
 import { useRouter } from 'next/navigation';
 
 const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({

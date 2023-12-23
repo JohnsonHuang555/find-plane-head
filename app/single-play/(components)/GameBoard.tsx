@@ -2,6 +2,7 @@ import { BoardCell, Plane } from '@/games/FindPlaneHead';
 import { useCallback, useState } from 'react';
 import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
 import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
+import { PapayaMotion } from '@/components/papaya/PapayaMotion';
 
 type GameBoardProps = {
   mode: 'deployment' | 'firing';
@@ -143,11 +144,19 @@ const GameBoard = ({
               }
             }}
           >
-            <div
-              className={`w-[30px] h-[30px] rounded-full ${
-                showHit(j, i) ? 'bg-amber-200' : ''
-              }`}
-            />
+            {showHit(j, i) && (
+              <PapayaMotion
+                key={`${i}-${j}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  repeat: 2,
+                  ease: 'easeInOut',
+                  duration: 0.5,
+                }}
+                className="w-[30px] h-[30px] rounded-full bg-amber-200"
+              />
+            )}
           </div>
         );
       }
