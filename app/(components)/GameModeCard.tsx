@@ -3,22 +3,33 @@
 import { useRouter } from 'next/navigation';
 import PapayaCard from '@/components/papaya/PapayaCard';
 import { Modal } from '@douyinfe/semi-ui';
+import {
+  UserGroupIcon,
+  ComputerDesktopIcon,
+} from '@heroicons/react/24/outline';
 
 type GameModeCardProps = {
+  type: 'single' | 'multiple';
   title: React.ReactNode;
   path: string;
   modalContent: React.ReactNode;
 };
 
-const GameModeCard = ({ title, path, modalContent }: GameModeCardProps) => {
+const GameModeCard = ({
+  type,
+  title,
+  path,
+  modalContent,
+}: GameModeCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {
-    if (path === '#') {
+    if (type === 'multiple') {
       Modal.info({
         title,
         content: 'Coming soon',
         centered: true,
+        icon: null,
       });
       return;
     }
@@ -27,19 +38,27 @@ const GameModeCard = ({ title, path, modalContent }: GameModeCardProps) => {
       content: modalContent,
       onOk: () => router.push(path),
       centered: true,
+      icon: null,
     });
   };
 
   return (
-    <div onClick={handleClick} className="w-[400px]">
+    <div onClick={handleClick} className="w-[300px]">
       <PapayaCard
         shadows="always"
-        className="flex justify-center items-center h-[400px]"
+        className="min-h-[200px] flex items-center justify-center"
         bodyStyle={{
-          fontSize: '60px',
+          fontSize: '40px',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        {title}
+        {type === 'multiple' && <UserGroupIcon className="w-[70px] mb-5" />}
+        {type === 'single' && <ComputerDesktopIcon className="w-[70px] mb-5" />}
+        <span className="mb-4">{title}</span>
       </PapayaCard>
     </div>
   );

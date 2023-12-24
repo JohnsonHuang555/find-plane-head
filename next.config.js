@@ -1,6 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'standalone',
-}
+const semi = require('@douyinfe/semi-next').default({});
 
-module.exports = nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = semi({
+  reactStrictMode: false,
+});
+
+module.exports = nextConfig;
