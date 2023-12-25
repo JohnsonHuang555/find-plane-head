@@ -6,6 +6,9 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       backgroundImage: {
@@ -21,8 +24,8 @@ const config: Config = {
       laptop: '1025px',
       // => @media (min-width: 1025px) { ... }
 
-      desktop: '1280px',
-      // => @media (min-width: 1280px) { ... }
+      desktop: '1367px',
+      // => @media (min-width: 1367px) { ... }
     },
   },
   plugins: [],

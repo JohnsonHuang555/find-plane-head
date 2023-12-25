@@ -26,30 +26,3 @@ body {
     )
     rgb(var(--background-start-rgb)); */
 }
-
-button[aria-label='confirm'] {
-  background: #9bbdad;
-  color: white;
-  border-radius: 6px;
-  padding: 10px 16px;
-  margin-left: 16px !important;
-  height: auto;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-}
-button[aria-label='cancel'] {
-  box-shadow: inset 0 0 0 1px #9bbdad !important;
-  color: #9bbdad !important;
-  border-radius: 6px !important;
-  padding: 10px 16px !important;
-  height: auto;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-}
-button[aria-label='cancel']:hover {
-  box-shadow: inset 0 0 0 1px #657e73 !important;
-  color: #657e73 !important;
-  background: white !important;
-}

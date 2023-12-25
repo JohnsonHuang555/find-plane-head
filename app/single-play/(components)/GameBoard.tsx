@@ -12,7 +12,7 @@ type GameBoardProps = {
   deployingPlaneFunc?: (
     headX: number,
     headY: number,
-    rotateDirection: RotateDirection
+    rotateDirection: RotateDirection,
   ) => Plane[];
   placedPlanes?: SettingPlane;
   disableHover?: boolean;
@@ -42,7 +42,7 @@ const GameBoard = ({
       const generatedPlane = deployingPlaneFunc(
         currentX,
         currentY,
-        rotateDirection
+        rotateDirection,
       );
       setDeployingPlane(generatedPlane);
     }
@@ -61,7 +61,7 @@ const GameBoard = ({
         }
       }
       if (mode === 'firing' && firingBoard) {
-        const cell = firingBoard.find((b) => b.index === 10 * y + x);
+        const cell = firingBoard.find(b => b.index === 10 * y + x);
         if (isPlayer) {
           if (cell?.isPlaneHead) {
             return 'bg-red-400';
@@ -88,13 +88,13 @@ const GameBoard = ({
       }
       return 'bg-slate-400';
     },
-    [firingBoard, isComputer, isPlayer, mode, placedPlanes]
+    [firingBoard, isComputer, isPlayer, mode, placedPlanes],
   );
 
   const showHit = useCallback(
     (x: number, y: number): boolean => {
       if (mode === 'firing' && firingBoard) {
-        const cell = firingBoard.find((b) => b.index === 10 * y + x);
+        const cell = firingBoard.find(b => b.index === 10 * y + x);
         if (isPlayer && cell?.isReveal) {
           if (cell.isPlaneBody || cell.isPlaneHead) {
             return true;
@@ -108,7 +108,7 @@ const GameBoard = ({
       }
       return false;
     },
-    [firingBoard, isComputer, isPlayer, mode]
+    [firingBoard, isComputer, isPlayer, mode],
   );
 
   // 生成棋盤格的2D數組，用於標識每個格子的顏色
@@ -117,23 +117,24 @@ const GameBoard = ({
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         const isDeploying = deployingPlane.find(
-          (plane) => plane.x === j && plane.y === i
+          plane => plane.x === j && plane.y === i,
         );
         board.push(
           <div
             key={`${i}-${j}`}
-            className={`relative w-[80px] h-[80px] border-2 border-solid border-white flex items-center justify-center ${
+            className={`relative desktop:w-[80px] desktop:h-[80px] laptop:w-[50px] laptop:h-[50px] border-2 border-solid border-white flex items-center justify-center ${
               isDeploying && !isAllPlaced
                 ? 'bg-sky-600'
                 : showDeployedPlane(j, i)
             } ${
               !disableHover
-                ? 'cursor-pointer hover:opacity-70'
+                ? 'cursor-pointer hover:opacity-80'
                 : 'cursor-default'
             }`}
             onClick={() => {
               if (mode === 'deployment') {
                 onCellClick && onCellClick(deployingPlane);
+                setDeployingPlane([]);
               } else {
                 onFire && onFire(j, i);
               }
@@ -157,7 +158,7 @@ const GameBoard = ({
                 className="w-[30px] h-[30px] rounded-full bg-amber-200"
               />
             )}
-          </div>
+          </div>,
         );
       }
     }
