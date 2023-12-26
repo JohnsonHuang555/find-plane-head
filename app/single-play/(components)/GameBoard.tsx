@@ -1,5 +1,5 @@
 import { BoardCell, Plane } from '@/games/FindPlaneHead';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { RotateDirection, SettingPlane } from './phases/DeploymentPhase';
 import { existPlacedPlane } from '@/helpers/BasicPlanePosition';
 import { PapayaMotion } from '@/components/papaya/PapayaMotion';
@@ -22,6 +22,9 @@ type GameBoardProps = {
   isComputer?: boolean;
 };
 
+let currentMousePositionX = 0;
+let currentMousePositionY = 0;
+
 const GameBoard = ({
   mode,
   rotateDirection,
@@ -37,16 +40,16 @@ const GameBoard = ({
 }: GameBoardProps) => {
   const [deployingPlane, setDeployingPlane] = useState<Plane[]>([]);
 
-  const handleMouseHoverPosition = (currentX: number, currentY: number) => {
+  const handleMouseHoverPosition = useCallback(() => {
     if (deployingPlaneFunc && rotateDirection) {
       const generatedPlane = deployingPlaneFunc(
-        currentX,
-        currentY,
+        currentMousePositionX,
+        currentMousePositionY,
         rotateDirection,
       );
       setDeployingPlane(generatedPlane);
     }
-  };
+  }, [deployingPlaneFunc, rotateDirection]);
 
   const showDeployedPlane = useCallback(
     (x: number, y: number): string => {
@@ -141,7 +144,9 @@ const GameBoard = ({
             }}
             onMouseOver={() => {
               if (mode === 'deployment') {
-                handleMouseHoverPosition(j, i);
+                currentMousePositionX = j;
+                currentMousePositionY = i;
+                handleMouseHoverPosition();
               }
             }}
           >
@@ -164,6 +169,12 @@ const GameBoard = ({
     }
     return board;
   };
+
+  useEffect(() => {
+    if (rotateDirection) {
+      handleMouseHoverPosition();
+    }
+  }, [handleMouseHoverPosition, rotateDirection]);
 
   return (
     <div className="grid grid-cols-10 grid-rows-10 grid-gap-0 border-2 border-white">

@@ -4,12 +4,12 @@ import { Plane, PlaneMap, PlaneType } from '@/games/FindPlaneHead';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   existPlacedPlane,
-  generateComputerPlanes,
   generatePlaneA,
   generatePlaneB,
   generatePlaneC,
 } from '@/helpers/BasicPlanePosition';
 import { Toast } from '@douyinfe/semi-ui';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 
 type DeploymentPhase = {
   onDeployPlane: (planes: PlaneMap) => void;
@@ -65,7 +65,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
   });
 
   const needGeneratedPlane = useMemo(() => {
-    const plane = Object.values(settingPlaneMap).find((v) => !v.isSet);
+    const plane = Object.values(settingPlaneMap).find(v => !v.isSet);
     return plane;
   }, [settingPlaneMap]);
 
@@ -90,7 +90,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
   }, [currentRotateDirection]);
 
   const handleResetPlane = () => {
-    setSettingPlaneMap((state) => {
+    setSettingPlaneMap(state => {
       const tempState = { ...state };
       tempState[PlaneType.A].isSet = false;
       tempState[PlaneType.A].position = undefined;
@@ -103,10 +103,10 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
   };
 
   const handleCellClick = (deployedPlane: Plane[]) => {
-    const overlayPlane = deployedPlane.some((d) => {
+    const overlayPlane = deployedPlane.some(d => {
       return !!existPlacedPlane(d.x, d.y, settingPlaneMap);
     });
-    const overRange = deployedPlane.some((d) => {
+    const overRange = deployedPlane.some(d => {
       return d.x < 0 || d.y < 0 || d.x >= 10 || d.y >= 10;
     });
 
@@ -129,7 +129,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     }
 
     if (deployedPlane.length === 0) return;
-    setSettingPlaneMap((state) => {
+    setSettingPlaneMap(state => {
       const tempState = { ...state };
       const plane = needGeneratedPlane?.plane as PlaneType;
       tempState[plane].isSet = true;
@@ -153,7 +153,7 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
         handleRotatePlane();
       }
     },
-    [handleRotatePlane]
+    [handleRotatePlane],
   );
 
   useEffect(() => {
@@ -164,50 +164,69 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
     };
   }, [handleKeyClick]);
   return (
-    <>
-      <div className="mb-2 text-2xl">設置飛機</div>
-      <div className="mb-6 text-base">
-        請放置三架飛機，使用旋轉按鈕或 Q 鍵改變飛機方向，使用清除重新放置飛機
+    <div className="flex w-full gap-16">
+      <div className="flex justify-center items-center flex-col">
+        <div className="mb-2 text-2xl font-semibold">設置飛機</div>
+        <div className="mb-6 text-base">
+          請放置三架飛機，使用旋轉按鈕或 Q 鍵改變飛機方向，使用清除重新放置飛機
+        </div>
+        <GameBoard
+          mode="deployment"
+          rotateDirection={currentRotateDirection}
+          onCellClick={handleCellClick}
+          deployingPlaneFunc={needGeneratedPlane?.generateFunc}
+          isAllPlaced={!needGeneratedPlane}
+          placedPlanes={settingPlaneMap}
+        />
+        <div className="flex gap-3">
+          <PapayaButton
+            className="w-[200px] mt-6"
+            size="large"
+            theme="solid"
+            onClick={handleResetPlane}
+          >
+            清除
+          </PapayaButton>
+          <PapayaButton
+            className="w-[200px] mt-6"
+            size="large"
+            theme="solid"
+            onClick={handleRotatePlane}
+            disabled={!needGeneratedPlane}
+          >
+            旋轉
+          </PapayaButton>
+          <PapayaButton
+            disabled={!!needGeneratedPlane}
+            className="w-[200px] mt-6"
+            size="large"
+            theme="solid"
+            type="tertiary"
+            onClick={handleDeployPlane}
+          >
+            完成
+          </PapayaButton>
+        </div>
       </div>
-      <GameBoard
-        mode="deployment"
-        rotateDirection={currentRotateDirection}
-        onCellClick={handleCellClick}
-        deployingPlaneFunc={needGeneratedPlane?.generateFunc}
-        isAllPlaced={!needGeneratedPlane}
-        placedPlanes={settingPlaneMap}
-      />
-      <div className="flex gap-3">
-        <PapayaButton
-          className="w-[200px] mt-6"
-          size="large"
-          theme="light"
-          type="primary"
-          onClick={handleResetPlane}
-        >
-          清除
-        </PapayaButton>
-        <PapayaButton
-          className="w-[200px] mt-6"
-          size="large"
-          theme="light"
-          type="primary"
-          onClick={handleRotatePlane}
-        >
-          旋轉
-        </PapayaButton>
-        <PapayaButton
-          disabled={!!needGeneratedPlane}
-          className="w-[200px] mt-6"
-          size="large"
-          theme="solid"
-          type="primary"
-          onClick={handleDeployPlane}
-        >
-          完成
-        </PapayaButton>
+      <div className="flex flex-col justify-start items-center min-w-[200px]">
+        <div className="mb-8 mt-9 text-xl font-semibold">當前飛機</div>
+        {needGeneratedPlane?.plane === PlaneType.A && (
+          <img src="/planeA.png" className="w-[200px]" />
+        )}
+        {needGeneratedPlane?.plane === PlaneType.B && (
+          <img src="/planeB.png" className="w-[200px]" />
+        )}
+        {needGeneratedPlane?.plane === PlaneType.C && (
+          <img src="/planeC.png" className="w-[200px]" />
+        )}
+        {needGeneratedPlane?.plane === undefined && (
+          <div className="flex flex-col items-center">
+            <CheckCircleIcon className="text-green-700 w-[80px] h-[80px] mb-4" />
+            <span className="text-lg">已設置完成</span>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
