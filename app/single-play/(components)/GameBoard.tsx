@@ -177,9 +177,17 @@ const GameBoard = ({
   }, [handleMouseHoverPosition, rotateDirection]);
 
   return (
-    <div className="grid grid-cols-10 grid-rows-10 grid-gap-0 border-2 border-white">
+    <PapayaMotion
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        ease: 'easeInOut',
+        duration: 0.5,
+      }}
+      className="grid grid-cols-10 grid-rows-10 grid-gap-0 border-2 border-white"
+    >
       {generateBoard()}
-    </div>
+    </PapayaMotion>
   );
 };
 

@@ -1,5 +1,6 @@
 import { BoardCell } from '@/games/FindPlaneHead';
 import GameBoard from '../GameBoard';
+import { PapayaMotion } from '@/components/papaya/PapayaMotion';
 
 type FiringPhaseProps = {
   isYourTurn: boolean;
@@ -16,9 +17,33 @@ const FiringPhase = ({
 }: FiringPhaseProps) => {
   return (
     <div>
-      <div className="text-center text-2xl mb-5">
-        {isYourTurn ? '你的回合' : '電腦回合'}
-      </div>
+      {isYourTurn ? (
+        <PapayaMotion
+          key={1}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, scale: 1.2 }}
+          transition={{
+            ease: 'easeInOut',
+            duration: 0.5,
+          }}
+          className="text-center text-2xl mb-5 font-semibold"
+        >
+          你的回合
+        </PapayaMotion>
+      ) : (
+        <PapayaMotion
+          key={2}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, scale: 1.2 }}
+          transition={{
+            ease: 'easeInOut',
+            duration: 0.5,
+          }}
+          className="text-center text-2xl mb-5 font-semibold"
+        >
+          電腦回合
+        </PapayaMotion>
+      )}
       <div className="flex flex-col gap-12 laptop:flex-row">
         <div className="flex-1">
           <div className="text-center text-xl mb-2">YOU</div>

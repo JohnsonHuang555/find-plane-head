@@ -26,7 +26,7 @@ const GameModeCard = ({
   const handleClick = () => {
     if (type === 'multiple') {
       Modal.info({
-        title,
+        title: '提示',
         content: 'Coming soon',
         centered: true,
         icon: null,
@@ -34,7 +34,7 @@ const GameModeCard = ({
       return;
     }
     Modal.confirm({
-      title,
+      title: '提示',
       content: modalContent,
       onOk: () => router.push(path),
       centered: true,

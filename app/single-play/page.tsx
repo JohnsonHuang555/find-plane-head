@@ -38,7 +38,9 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
         icon: null,
         hasCancel: false,
         onOk: () => {
-          router.replace('/');
+          setTimeout(() => {
+            router.replace('/');
+          }, 1500);
         },
       });
     }
@@ -53,7 +55,7 @@ const SinglePlay: React.FunctionComponent<BoardProps<FindPlaneHeadState>> = ({
   }, [isYourTurn, moves]);
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center overflow-hidden">
       {ctx.phase === 'deployment' && (
         <DeploymentPhase onDeployPlane={handleDeployPlane} />
       )}

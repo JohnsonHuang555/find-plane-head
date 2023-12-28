@@ -10,6 +10,7 @@ import {
 } from '@/helpers/BasicPlanePosition';
 import { Toast } from '@douyinfe/semi-ui';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
+import { PapayaMotion } from '@/components/papaya/PapayaMotion';
 
 type DeploymentPhase = {
   onDeployPlane: (planes: PlaneMap) => void;
@@ -178,7 +179,16 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
           isAllPlaced={!needGeneratedPlane}
           placedPlanes={settingPlaneMap}
         />
-        <div className="flex gap-3">
+        <PapayaMotion
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            delay: 0.5,
+            ease: 'easeInOut',
+            duration: 0.5,
+          }}
+          className="flex gap-3"
+        >
           <PapayaButton
             className="w-[200px] mt-6"
             size="large"
@@ -206,9 +216,18 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
           >
             完成
           </PapayaButton>
-        </div>
+        </PapayaMotion>
       </div>
-      <div className="flex flex-col justify-start items-center min-w-[200px]">
+      <PapayaMotion
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          delay: 0.5,
+          ease: 'easeInOut',
+          duration: 0.5,
+        }}
+        className="flex flex-col justify-start items-center min-w-[200px]"
+      >
         <div className="mb-8 mt-9 text-xl font-semibold">當前飛機</div>
         {needGeneratedPlane?.plane === PlaneType.A && (
           <img src="/planeA.png" className="w-[200px]" />
@@ -220,12 +239,21 @@ const DeploymentPhase = ({ onDeployPlane }: DeploymentPhase) => {
           <img src="/planeC.png" className="w-[200px]" />
         )}
         {needGeneratedPlane?.plane === undefined && (
-          <div className="flex flex-col items-center">
+          <PapayaMotion
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: 0.1,
+              ease: 'easeInOut',
+              duration: 0.2,
+            }}
+            className="flex flex-col items-center"
+          >
             <CheckCircleIcon className="text-green-700 w-[80px] h-[80px] mb-4" />
             <span className="text-lg">已設置完成</span>
-          </div>
+          </PapayaMotion>
         )}
-      </div>
+      </PapayaMotion>
     </div>
   );
 };
